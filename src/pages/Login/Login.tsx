@@ -1,10 +1,11 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom"
-import { auth } from "../../firebase/firebase.config";
+import { auth, database } from "../../firebase/firebase.config";
 import { FirebaseError } from "firebase/app";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../redux/slices/user.slice";
+import { get, ref } from "firebase/database";
 
 export const Login = () => {
     const navigate = useNavigate();
@@ -19,14 +20,27 @@ export const Login = () => {
 
         try {
             const response = await signInWithEmailAndPassword(auth, email, password);
+
+            if (response) {
+                const userRef = ref(database, `users/${response.user.uid}`)
+
+                const snapshot = await get(userRef)
+                if (snapshot.exists()) {
+                    const userData = snapshot.val();
+                    console.log("userDate", userData)
+                    const { firstName, lastName } = userData;
+                    dispatch(setUser({
+                        email: response.user.email,
+                        id: response.user.uid,
+                        accessToken: "",
+                        firstName: firstName,
+                        lastName: lastName
+                    }))
+                }
+            }
             setError("");
             setEmail("");
             setPassword("");
-            dispatch(setUser({
-                email: response.user.email,
-                id: response.user.uid,
-                accessToken: ""
-            }))
             navigate("/dashboard")
             console.log("response", response)
         } catch (error) {
