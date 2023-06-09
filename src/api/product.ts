@@ -1,11 +1,12 @@
-import axios from "axios"
+import { axiosProduct } from '../utils/api'
 
 export const getProductsAPI = async () => {
-    console.log("getproductsapi")
-    try {
-        return await axios.get("https://dummyjson.com/products")
+  try {
+    const response = await axiosProduct.get('/products')
+    console.log('getProductAPe response', response)
+    return response.data
 
-    } catch (error) {
-        console.error(error)
-    }
+  } catch (error) {
+    console.error(error)
+  }
 }

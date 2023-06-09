@@ -6,9 +6,9 @@ export interface User {
     lastName: string
 }
 export const UserInitialState = {
-    email: "",
-    id: "",
-    accessToken: "",
-    firstName: "",
-    lastName: ""
+  email: '',
+  id: '',
+  accessToken: '',
+  firstName: '',
+  lastName: ''
 }
