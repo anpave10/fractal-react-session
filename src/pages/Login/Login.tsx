@@ -10,13 +10,14 @@ import { TitleComponent } from '../../components/styled-components/TitleComponen
 import TextField from '@mui/material/TextField'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
+import { createUserAdapter } from '../../adapters/user.adapter'
 
 interface LoginInterface{
   email: string
   password: string
 }
 
-export const Login = () => {
+const Login = () => {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -35,47 +36,43 @@ export const Login = () => {
       password: ''
     },
     validationSchema:loginValidate,
-    onSubmit: (values: LoginInterface) => {
-      alert(JSON.stringify(values, null, 2))
-    }
-  })
+    onSubmit: async (values: LoginInterface) => {
+      const {email, password} = values
+      try {
+        const response = await signInWithEmailAndPassword(auth, email, password)
 
-  const handleSignIn = async (e: FormEvent) => {
-    e.preventDefault()
+        if (response) {
+          const userRef = ref(database, `users/${response.user.uid}`)
 
-    try {
-      const response = await signInWithEmailAndPassword(auth, email, password)
-
-      if (response) {
-        const userRef = ref(database, `users/${response.user.uid}`)
-
-        const snapshot = await get(userRef)
-        if (snapshot.exists()) {
-          const userData = snapshot.val()
-          console.log('userDate', userData)
-          const { firstName, lastName } = userData
-          dispatch(setUser({
-            email: response.user.email,
-            id: response.user.uid,
-            accessToken: '',
-            firstName: firstName,
-            lastName: lastName
-          }))
+          const snapshot = await get(userRef)
+          if (snapshot.exists()) {
+            const userData = snapshot.val()
+            const data = createUserAdapter(userData)
+            console.log('userDate', data)
+            const { firstName, lastName } = data
+            dispatch(setUser({
+              email: response.user.email,
+              id: response.user.uid,
+              accessToken: '',
+              firstName: firstName,
+              lastName: lastName
+            }))
+          }
+        }
+        setError('')
+        setEmail('')
+        setPassword('')
+        navigate('/dashboard')
+        console.log('response', response)
+      } catch (error) {
+        if (error instanceof FirebaseError) {
+          setError(error.message)
+        } else {
+          setError('Unknown error: ' + error)
         }
       }
-      setError('')
-      setEmail('')
-      setPassword('')
-      navigate('/dashboard')
-      console.log('response', response)
-    } catch (error) {
-      if (error instanceof FirebaseError) {
-        setError(error.message)
-      } else {
-        setError('Unknown error: ' + error)
-      }
     }
-  }
+  })
 
   return (<div>
     <h1>Sign in</h1>
@@ -83,10 +80,19 @@ export const Login = () => {
     <TitleComponent bgColor="#1FDDB2" fontColor='#110781'>I'm another styled component</TitleComponent> */}
     <form onSubmit={formik.handleSubmit}>
       {/* <TextField  id="outlined-basic" label="Outlined" variant="outlined" /> */}
-      <label>Email: </label>
-      <input name='email' type="text" value={formik.values.email} onChange={formik.handleChange}  />
-      <br></br>
-      {formik.touched.email && Boolean(formik.errors.email) && <label style={{ color: 'red' }}>{formik.errors.email}</label>}
+      {/* <label>Email: </label> */}
+      <TextField
+        error={formik.touched.email && Boolean(formik.errors.email)}
+        id="outlined-error-helper-text"
+        label="Email"
+        name='email'
+        value={formik.values.email}
+        onChange={formik.handleChange}
+        helperText={formik.errors.email}
+      />
+      {/* <input name='email' type="text" value={formik.values.email} onChange={formik.handleChange}  /> */}
+      {/* <br></br>
+      {formik.touched.email && Boolean(formik.errors.email) && <label style={{ color: 'red' }}>{formik.errors.email}</label>} */}
       <br></br>
       <label>Password: </label>
       <input name='password' type="password"  value={formik.values.password} onChange={formik.handleChange} />
@@ -104,3 +110,5 @@ export const Login = () => {
     </div>
   </div>)
 }
+
+export default Login

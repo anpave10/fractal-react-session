@@ -4,44 +4,19 @@ import App from './App.tsx'
 import './index.css'
 import { Provider } from 'react-redux'
 import { store } from './redux/store.tsx'
-import { ThemeProvider, createTheme, CssBaseline } from '@mui/material'
-
-const themeOptions = createTheme<any>({
-  type: 'dark',
-  palette: {
-    primary: {
-      main: '#3F92AF',
-    },
-    secondary: {
-      main: '#f50057',
-    },
-    background: {
-      default: '#4D4884',
-    },
-    text: {
-      primary: '#fff'
-    },
-    customGreen: {
-      main: '#31AE28'
-    }
-  },
-  components: {
-    MuiInputBase: {
-      styleOverrides: {
-        root: {
-          background: '#40C169'
-        }
-      }
-    }
-  }
-})
+import { ThemeProvider, CssBaseline } from '@mui/material'
+import { ApolloProvider } from '@apollo/client'
+import themeOptions from './styles/theme.js'
+import client from './graphql/apolloClient.ts'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <ThemeProvider theme={themeOptions}>
       <CssBaseline/>
       <Provider store={store}>
-        <App />
+        <ApolloProvider client={client}>
+          <App />
+        </ApolloProvider>
       </Provider>
     </ThemeProvider>
   </React.StrictMode>,

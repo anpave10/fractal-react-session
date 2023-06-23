@@ -13,7 +13,7 @@ import { getProductsAPI } from '../../api/product'
 import { Product } from '../../models/productSlice'
 import ProductComponent from '../../components/products/Product'
 
-export const Dashboard = () => {
+const Dashboard = () => {
   const [value, setValue] = useState('Dashboard value')
   const [products, setProducts] = useState([])
 
@@ -75,3 +75,5 @@ export const Dashboard = () => {
 
   </div>)
 }
+
+export default Dashboard

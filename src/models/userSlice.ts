@@ -1,14 +1,6 @@
-export interface User {
-    email: string
+import { UserBase } from './user'
+
+export interface User extends UserBase {
     id: string
     accessToken: string
-    firstName: string
-    lastName: string
-}
-export const UserInitialState = {
-  email: '',
-  id: '',
-  accessToken: '',
-  firstName: '',
-  lastName: ''
 }
