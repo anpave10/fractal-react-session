@@ -1,12 +1,12 @@
 import { signInWithEmailAndPassword } from 'firebase/auth'
-import { FormEvent, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { auth, database } from '../../firebase/firebase.config'
 import { FirebaseError } from 'firebase/app'
 import { useDispatch } from 'react-redux'
 import { setUser } from '../../redux/slices/user.slice'
 import { get, ref } from 'firebase/database'
-import { TitleComponent } from '../../components/styled-components/TitleComponent'
+// import { TitleComponent } from '../../components/styled-components/TitleComponent'
 import TextField from '@mui/material/TextField'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
@@ -19,8 +19,6 @@ interface LoginInterface{
 
 const Login = () => {
   const navigate = useNavigate()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
   const dispatch = useDispatch()
@@ -60,8 +58,6 @@ const Login = () => {
           }
         }
         setError('')
-        setEmail('')
-        setPassword('')
         navigate('/dashboard')
         console.log('response', response)
       } catch (error) {

@@ -4,7 +4,7 @@ export interface Product {
     description: string
     discountPercentage: number
     id: number
-    images: string[]
+    images: never[]
     price: number
     rating: number
     stock: number

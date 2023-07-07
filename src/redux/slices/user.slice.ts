@@ -22,6 +22,7 @@ export const userSlice = createSlice({
   initialState: getUserFromLocalStorage(),
   reducers: {
     setUser: (state, action) => {
+      console.log(state)
       setDataInLocalStorage(action.payload)
       return action.payload
     },
